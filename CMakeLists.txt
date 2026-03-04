@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.1.2 FATAL_ERROR)
 
 set(PROJECT_NAME ctsa)
 project(${PROJECT_NAME} CXX C)
