@@ -28,6 +28,9 @@ jobs:
           - os: macos-latest
             arch: x64
             family: macos
+          - os: macos-latest
+            arch: arm64
+            family: macos
 
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.commits[0].message, '[ci skip]')"
