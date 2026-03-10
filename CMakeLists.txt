@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.31.6)
 set(PROJECT_NAME ctsa)
 project(${PROJECT_NAME} CXX C)
 
-set(CMAKE_C_FLAGS "-W -Wall -Wextra -O2")
 set(CMAKE_C_STANDARD 23)
 
 # Find JNI
