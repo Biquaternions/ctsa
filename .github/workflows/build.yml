@@ -79,7 +79,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           cmake -B build-${{ matrix.arch }}
-          cd build
+          cd build-${{ matrix.arch }}
           if ("${{ matrix.arch }}" -eq "x86") {
             cmake .. -A Win32 -DCMAKE_BUILD_TYPE=Release
           } else {
