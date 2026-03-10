@@ -20,7 +20,7 @@ file(GLOB CTSA_SOURCES src/*.c)
 file(GLOB CTSA_HEADERS src/*.h)
 
 add_library(ctsa SHARED library.c library.h ${CTSA_SOURCES} ${CTSA_HEADERS})
-target_link_libraries(ctsa PRIVATE ${JNI_LIBRARIES})
+target_include_directories(ctsa PRIVATE ${JNI_INCLUDE_DIRS})
 
 # Platform extensions
 if(WIN32)
