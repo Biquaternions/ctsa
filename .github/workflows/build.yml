@@ -45,11 +45,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-multilib g++-multilib gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          sudo apt-get install -y gcc-multilib g++-multilib gcc-13-aarch64-linux-gnu g++-13-aarch64-linux-gnu
 
       - name: Configure CMake
         run: |
-          mkdir build
+          cmake -B build
           cd build
 
           if [ "${{ runner.os }}" = "Linux" ]; then
@@ -58,7 +58,7 @@ jobs:
             elif [ "${{ matrix.arch }}" = "arm64" ]; then
               cmake .. \
                 -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
-                -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
+                -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc-13
             else
               cmake ..
             fi
@@ -68,7 +68,7 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          mkdir build
+          cmake -B build
           cd build
           if ("${{ matrix.arch }}" -eq "x86") {
             cmake .. -A Win32
