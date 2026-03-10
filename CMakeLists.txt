@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-cmake_minimum_required(VERSION 4.1.2)
+cmake_minimum_required(VERSION 3.31.6)
 
 # Project info
 set(PROJECT_NAME ctsa)
@@ -17,8 +17,9 @@ set(CMAKE_SHARED_LIBRARY_PREFIX)
 
 # Collect all ctsa source files
 file(GLOB CTSA_SOURCES src/*.c)
+file(GLOB CTSA_HEADERS src/*.h)
 
-add_library(ctsa SHARED library.c ${CTSA_SOURCES})
+add_library(ctsa SHARED library.c library.h ${CTSA_SOURCES} ${CTSA_HEADERS})
 target_link_libraries(ctsa ${JNI_LIBRARIES})
 
 # Platform extensions
