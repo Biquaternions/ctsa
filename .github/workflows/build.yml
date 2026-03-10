@@ -60,6 +60,7 @@ jobs:
           fi
 
       - name: Configure CMake
+        if: runner.os != 'Windows'
         run: |
           cmake -B build-${{ matrix.family }}-${{ matrix.arch }}
           cd build-${{ matrix.family }}-${{ matrix.arch }}
