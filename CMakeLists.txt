@@ -1,46 +1,22 @@
 # SPDX-License-Identifier: BSD-3-Clause
-cmake_minimum_required(VERSION 4.1.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.1.2)
 
+# Project info
 set(PROJECT_NAME ctsa)
 project(${PROJECT_NAME} CXX C)
 
-SET(CMAKE_C_FLAGS "-W -Wall -Wextra -O0")
+set(CMAKE_C_FLAGS "-W -Wall -Wextra -O2")
+set(CMAKE_C_STANDARD 23)
 
-# src root path
-set(CTSA_SRC_ROOT ${PROJECT_SOURCE_DIR} CACHE PATH "ctsa source root")
-# binary output by default
-set(COMMON_BIN_PATH ${CMAKE_BINARY_DIR}/Bin)
-set(LIBRARY_OUTPUT_PATH ${COMMON_BIN_PATH}/${CMAKE_BUILD_TYPE})
-set(EXECUTABLE_OUTPUT_PATH ${COMMON_BIN_PATH}/${CMAKE_BUILD_TYPE})
-# set where to find additional cmake modules if any
-set(CMAKE_MODULE_PATH ${CTSA_SRC_ROOT}/cmake ${CMAKE_MODULE_PATH})
-
-
-set(CTSA_VERSION "0.1.0" CACHE STRING "ctsa version" FORCE)
-message(">>> Building ctsa version: ${CTSA_VERSION}")
-message(">>> EXECUTABLE_OUTPUT_PATH = ${EXECUTABLE_OUTPUT_PATH}")
-
+# Find JNI
+find_package(JNI REQUIRED)
+include_directories(${JNI_INCLUDE_DIRS})
 
 # cleanup prefix lib for Unix-like OSes
-set(CMAKE_SHARED_MODULE_PREFIX)
+set(CMAKE_SHARED_LIBRARY_PREFIX)
 
-# install target to this folder by default
-set(CTSALIB_BINARY_DIR ${CTSA_SRC_ROOT}/bin)
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "${CTSA_BINARY_DIR}" CACHE PATH "default install path" FORCE)
-endif()
+# collect all ctsa source files
+file(GLOB CTSA_SOURCES src/*.c)
 
-# make include globaly visible
-set(PROJECT_WIDE_INCLUDE ${CTSA_SRC_ROOT}/include)
-include_directories(${PROJECT_WIDE_INCLUDE})
-
-
-
-
-include_directories(${COMMON_BIN_PATH})
-
-
-add_subdirectory(src)
-add_subdirectory(test) 
-
-install(DIRECTORY ${CTSA_SRC_ROOT}/include/ DESTINATION include FILES_MATCHING PATTERN "*.h")
+add_library(ctsa SHARED library.c ${CTSA_SOURCES})
+target_link_libraries(ctsa ${JNI_LIBRARIES})
