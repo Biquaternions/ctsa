@@ -78,12 +78,10 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          cmake -B build-${{ matrix.family }}-${{ matrix.arch }}
-          cd build-${{ matrix.family }}-${{ matrix.arch }}
           if ("${{ matrix.arch }}" -eq "x86") {
-            cmake .. -A Win32 -DCMAKE_BUILD_TYPE=Release
+            cmake -B build-${{ matrix.family }}-${{ matrix.arch }} -A Win32 -DCMAKE_BUILD_TYPE=Release
           } else {
-            cmake .. -DCMAKE_BUILD_TYPE=Release
+            cmake -B build-${{ matrix.family }}-${{ matrix.arch }} -DCMAKE_BUILD_TYPE=Release
           }
 
       - name: Build
