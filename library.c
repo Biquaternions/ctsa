@@ -2,8 +2,8 @@
 #include "library.h"
 #include "src/ctsa.h"
 
-static jclass arima_result_class = nullptr;
-static jmethodID arima_result_class_constructor = nullptr;
+static jclass arima_result_class = NULL;
+static jmethodID arima_result_class_constructor = NULL;
 
 JNIEXPORT void JNICALL
 Java_at_rafat_ctsa_CTSA_init(JNIEnv *env) {
@@ -56,12 +56,12 @@ Java_at_rafat_ctsa_CTSA_exec(JNIEnv *env,
     auto_arima_setOptMethod(obj, opt);
 
     // Allocate tsArray
-    jdouble *tsArray = (*env)->GetDoubleArrayElements(env, ts, nullptr);
-    auto_arima_exec(obj, tsArray, nullptr);
+    jdouble *tsArray = (*env)->GetDoubleArrayElements(env, ts, NULL);
+    auto_arima_exec(obj, tsArray, NULL);
 
     const auto forecast = (double*)malloc(sizeof(double) * L);
     const auto errors = (double*)malloc(sizeof(double) * L);
-    auto_arima_predict(obj, tsArray, nullptr, L, nullptr, forecast, errors);
+    auto_arima_predict(obj, tsArray, NULL, L, NULL, forecast, errors);
 
     const jdoubleArray java_forecast = (*env)->NewDoubleArray(env, L);
     const jdoubleArray java_errors = (*env)->NewDoubleArray(env, L);
