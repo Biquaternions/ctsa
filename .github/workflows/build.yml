@@ -61,8 +61,8 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B build-${{ matrix.arch }}
-          cd build-${{ matrix.arch }}
+          cmake -B build-${{ matrix.family }}-${{ matrix.arch }}
+          cd build-${{ matrix.family }}-${{ matrix.arch }}
 
           if [ "${{ runner.os }}" = "Linux" ]; then
             if [ "${{ matrix.arch }}" = "x86" ]; then
@@ -78,8 +78,8 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          cmake -B build-${{ matrix.arch }}
-          cd build-${{ matrix.arch }}
+          cmake -B build-${{ matrix.family }}-${{ matrix.arch }}
+          cd build-${{ matrix.family }}-${{ matrix.arch }}
           if ("${{ matrix.arch }}" -eq "x86") {
             cmake .. -A Win32 -DCMAKE_BUILD_TYPE=Release
           } else {
@@ -88,16 +88,16 @@ jobs:
 
       - name: Build
         run: |
-          cmake --build build-${{ matrix.arch }} --config Release
+          cmake --build build-${{ matrix.family }}-${{ matrix.arch }} --config Release
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@main
         with:
           name: ctsa-${{ matrix.family }}-${{ matrix.arch }}
           path: |
-            build-${{ matrix.arch }}/**/*.dll
-            build-${{ matrix.arch }}/**/*.so
-            build-${{ matrix.arch }}/**/*.dylib
+            build-${{ matrix.family }}-${{ matrix.arch }}/**/*.dll
+            build-${{ matrix.family }}-${{ matrix.arch }}/**/*.so
+            build-${{ matrix.family }}-${{ matrix.arch }}/**/*.dylib
 
       - name: Release ctsa
         uses: softprops/action-gh-release@master
