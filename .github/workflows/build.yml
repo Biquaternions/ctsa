@@ -98,17 +98,3 @@ jobs:
             build-${{ matrix.family }}-${{ matrix.arch }}/**/*.so
             build-${{ matrix.family }}-${{ matrix.arch }}/**/*.dylib
 
-      - name: Release ctsa
-        uses: softprops/action-gh-release@master
-        with:
-          name: "🌧️ ctsa JNI (Build ${{ env.BUILD_NUMBER }})"
-          tag_name: "auto-build"
-          files: |
-            **/*.dll
-            **/*.so
-            **/*.dylib
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          target_commitish: "${{ github.sha }}"
-          draft: false
-          prerelease: false
-
