@@ -1,0 +1,105 @@
+name: Build Libraries
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            arch: x86
+          - os: windows-latest
+            arch: x64
+          - os: ubuntu-latest
+            arch: x86
+          - os: ubuntu-latest
+            arch: x64
+          - os: ubuntu-latest
+            arch: arm64
+          - os: macos-latest
+            arch: x64
+
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.commits[0].message, '[ci skip]')"
+    permissions:
+      contents: write
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install Linux compilers
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib g++-multilib gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            if [ "${{ matrix.arch }}" = "x86" ]; then
+              cmake .. -DCMAKE_C_FLAGS="-m32"
+            elif [ "${{ matrix.arch }}" = "arm64" ]; then
+              cmake .. \
+                -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+                -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
+            else
+              cmake ..
+            fi
+          fi
+        shell: bash
+
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir build
+          cd build
+          if ("${{ matrix.arch }}" -eq "x86") {
+            cmake .. -A Win32
+          } else {
+            cmake ..
+          }
+
+      - name: Build
+        run: |
+          cmake --build build --config Release
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@main
+        with:
+          name: jni-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            build/**/*.dll
+            build/**/*.so
+            build/**/*.dylib
+
+      - name: Release ctsa
+        uses: softprops/action-gh-release@master
+        with:
+          name: "🌧️ ctsa JNI (Build ${{ env.BUILD_NUMBER }})"
+          tag_name: "auto-build"
+          files: |
+            **/*.dll
+            **/*.so
+            **/*.dylib
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          target_commitish: "${{ github.sha }}"
+          draft: false
+          prerelease: false
+

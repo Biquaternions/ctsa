@@ -18,6 +18,7 @@ Makefile
 
 #yml
 *.yml
+!.github/**
 
 #Compiled
 *.a
