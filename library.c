@@ -1,14 +1,19 @@
 
 #include "library.h"
 #include "src/ctsa.h"
+#include "src/jni_utils.h"
 
 static jclass arima_result_class = NULL;
 static jmethodID arima_result_class_constructor = NULL;
 
 JNIEXPORT void JNICALL
-Java_at_rafat_ctsa_CTSA_init(JNIEnv *env) {
-    arima_result_class = (*env)->FindClass(env, "at/rafat/ctsa/types/ArimaResult");
+Java_at_rafat_ctsa_CTSA_init(JNIEnv *env, jclass clazz) {
+    const jclass local_arima_result_class = (*env)->FindClass(env, "at/rafat/ctsa/types/ArimaResult");
+    arima_result_class = (*env)->NewGlobalRef(env, local_arima_result_class);
     arima_result_class_constructor = (*env)->GetMethodID(env, arima_result_class, "<init>", "([D[D)V");
+    (*env)->DeleteLocalRef(env, local_arima_result_class);
+
+    initJniUtils(env);
 }
 
 /**
@@ -16,6 +21,7 @@ Java_at_rafat_ctsa_CTSA_init(JNIEnv *env) {
  * It will automatically detect the appropriate (p, d, q)(P, D, Q) values within the provided range
  *
  * @param env JNI environment
+ * @param clazz JNI class
  * @param ts time series double array
  * @param p p max
  * @param d d max
@@ -32,7 +38,7 @@ Java_at_rafat_ctsa_CTSA_init(JNIEnv *env) {
  * @return arima result object
  */
 JNIEXPORT jobject JNICALL
-Java_at_rafat_ctsa_CTSA_exec(JNIEnv *env,
+Java_at_rafat_ctsa_CTSA_exec(JNIEnv *env, jclass clazz,
 
     const jdoubleArray ts,
     const jint p, const jint d, const jint q,
@@ -88,6 +94,10 @@ Java_at_rafat_ctsa_CTSA_exec(JNIEnv *env,
 }
 
 JNIEXPORT void JNICALL
-Java_at_rafat_ctsa_CTSA_destroy(JNIEnv *env) {
-    (*env)->DeleteLocalRef(env, arima_result_class);
+Java_at_rafat_ctsa_CTSA_destroy(JNIEnv *env, jclass clazz) {
+    if (arima_result_class != NULL) {
+        (*env)->DeleteGlobalRef(env, arima_result_class);
+        arima_result_class = NULL;
+    }
+    destroyJniUtils(env);
 }
