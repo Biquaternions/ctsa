@@ -65,8 +65,8 @@ Java_at_rafat_ctsa_CTSA_exec(JNIEnv *env, jclass clazz,
     jdouble *tsArray = (*env)->GetDoubleArrayElements(env, ts, NULL);
     auto_arima_exec(obj, tsArray, NULL);
 
-    const auto forecast = (double*)malloc(sizeof(double) * L);
-    const auto errors = (double*)malloc(sizeof(double) * L);
+    const double* forecast = (double*)malloc(sizeof(double) * L);
+    const double* errors = (double*)malloc(sizeof(double) * L);
     auto_arima_predict(obj, tsArray, NULL, L, NULL, forecast, errors);
 
     const jdoubleArray java_forecast = (*env)->NewDoubleArray(env, L);
